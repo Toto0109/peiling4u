@@ -2,6 +2,8 @@
 include "connect.php";
 
 session_start();
+
+// Kijkt of de gebruiker is ingelogd
 if(!isset($_SESSION["logged_in"]))
 {
     $_SESSION["logged_in"] = false;
@@ -45,7 +47,7 @@ if(!isset($_SESSION["logged_in"]))
 <?php
 if(isset($_POST["loguit"]))
 {
-    header("Refresh:0");
+    header("Refresh:0"); // Ververst de pagina
     session_destroy();
 }
 
@@ -56,6 +58,7 @@ if(isset($_POST["login"]))
 
     $gebruikersnaam = mysqli_real_escape_string($mysql, $_POST["gebruikersnaam"]);
 
+    // Query voor gebruikersnr, gebruikersnaam, wachtwoord
     $resultaat = mysqli_query($mysql,"SELECT gebruikersnr, gebruikersnaam, wachtwoord 
                                       FROM gebruikers 
                                       WHERE gebruikersnaam = '$gebruikersnaam'") 
@@ -66,10 +69,11 @@ if(isset($_POST["login"]))
 
     list($gebruikersnr, $gebruiker, $hash) =  mysqli_fetch_row($resultaat);
 
+    // Verifieert het wachtwoord
     if(password_verify($_POST["wachtwoord"], $hash))
     {
         header("Refresh:0");
-        echo "Ingelogd als: ".$gebruikersnr.$gebruiker;
+        echo "Ingelogd als: ".$gebruiker;
         $_SESSION["logged_in"] = true;
         $_SESSION["gebruiker"] = $gebruikersnr;
         $_SESSION["gebruikersnaam"] = $gebruikersnaam;
@@ -78,7 +82,5 @@ if(isset($_POST["login"]))
     {
         echo "De gebruikersnaam of het wachtwoord klopt niet";
     }
-
-    
 }
 ?>

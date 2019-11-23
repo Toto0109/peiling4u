@@ -2,6 +2,8 @@
 include "connect.php";
 
 session_start();
+
+// Kijkt of de gebruiker is ingelogd
 if(!isset($_SESSION["logged_in"]))
 {
     $_SESSION["logged_in"] = false;
@@ -46,8 +48,9 @@ if(isset($_POST["aanmelden"]))
     
     $email = mysqli_real_escape_string($mysql, $_POST["email"]);
     $gebruikersnaam = mysqli_real_escape_string($mysql, $_POST["gebruikersnaam"]);
-    $hash = password_hash($_POST["wachtwoord"], PASSWORD_DEFAULT);
+    $hash = password_hash($_POST["wachtwoord"], PASSWORD_DEFAULT); // Functie die het wachtwoord versleuteld
 
+    // Insert query voor gebruikersgegevens
     mysqli_query($mysql,"INSERT INTO gebruikers(gebruikersnaam,wachtwoord,email) 
                          VALUES('$gebruikersnaam','$hash','$email')") 
         or die("De insertquery op de database is mislukt!"); 
