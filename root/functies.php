@@ -43,4 +43,29 @@ function list_peilingen($gebruikersnr)
     }
 
 }
+
+function get_gebruikersnr($peilingnr)
+{
+    global $server, $user, $pass, $db;
+    $mysql = mysqli_connect($server,$user,$pass,$db) 
+        or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
+    
+    $resultaat = mysqli_query($mysql,"SELECT gebruikersnr
+                                      FROM peilingen
+                                      WHERE peilingnr = '$peilingnr'") 
+        or die("De query 1 op de database is mislukt!");
+     
+    mysqli_close($mysql) 
+        or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+
+    list($gebruikersnr) = mysqli_fetch_row($resultaat);
+    return $gebruikersnr;
+}
+
+function bewerk_peiling($peilingnr)
+{
+    echo "<form action='creator.php?nr='$peilingnr' method='post'>";
+    echo "<input type='text' name='gebruikersnaam'/> <br>";
+    echo "</form>";
+}
 ?>

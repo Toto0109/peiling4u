@@ -19,7 +19,19 @@ if(!isset($_SESSION["logged_in"]))
 <body>
     <a href="index.php">Home</a> <br>
     <?php
-    if($_SESSION["logged_in"] == true)
+    if(isset($_GET["nr"]))
+    {
+
+        if ($_SESSION["gebruiker"] == get_gebruikersnr($_GET["nr"]))
+        {
+            bewerk_peiling($_GET["nr"]);
+        }
+        else
+        {
+            echo "U heeft geen bewerkingsrechten voor deze peilingen";
+        }
+    }
+    else if($_SESSION["logged_in"] == true)
     {
         echo "Ingelogd als: ";
         echo get_gebruikersnaam($_SESSION["gebruiker"]);
@@ -68,5 +80,7 @@ if(isset($_POST["maakpeiling"]))
     
     mysqli_close($mysql) 
         or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+
+    header("Refresh:0");
 }
 ?>
