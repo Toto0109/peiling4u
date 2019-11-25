@@ -21,6 +21,7 @@ if(!isset($_SESSION["logged_in"]))
     <?php
     if($_SESSION["logged_in"] == true)
     {
+        $gebruikersnr = $_SESSION["gebruiker"];
         $gebruikersnaam = $_SESSION["gebruikersnaam"];
         echo "Ingelogd als: ";
         echo $gebruikersnaam;
@@ -34,6 +35,25 @@ if(!isset($_SESSION["logged_in"]))
                 Openbaar: <input type='checkbox' name='openbaar' value='1'> <br>
                 <input type='submit' name='maakpeiling' value='Maak een nieuwe peiling'>
             <form>";
+        
+        echo "Uw peilngen: <br>";
+
+        $mysql = mysqli_connect($server,$user,$pass,$db) 
+            or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
+
+        $resultaat = mysqli_query($mysql,"SELECT peilingnr, titel 
+                                          FROM peilingen
+                                          WHERE gebruikersnr = '$gebruikersnr'") 
+            or die("De query 1 op de database is mislukt!");
+        
+        mysqli_close($mysql) 
+            or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+        
+        echo "Uw peilngen: <br>";
+        while(list($peilingnr, $peilingtitel) = mysqli_fetch_row($resultaat))  
+        {
+            echo"<a href='creator.php?nr=$peilingnr'>$peilingtitel<a/><br />"; 
+        }
     }
     else 
     {
