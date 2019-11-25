@@ -1,6 +1,6 @@
 <?php
 include "connect.php";
-
+include "functies.php";
 session_start();
 
 // Kijkt of de gebruiker is ingelogd
