@@ -21,9 +21,8 @@ if(!isset($_SESSION["logged_in"]))
     <?php
     if($_SESSION["logged_in"] == true)
     {
-        $gebruikersnaam = $_SESSION["gebruikersnaam"];
         echo "Ingelogd als: ";
-        echo $gebruikersnaam;
+        echo get_gebruikersnaam($_SESSION["gebruiker"]);
         
         echo "<form action='login.php' method='post'>
                 <input type='submit' name='loguit' value='Loguit'>
