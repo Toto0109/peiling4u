@@ -21,9 +21,8 @@ if(!isset($_SESSION["logged_in"]))
     <?php
     if($_SESSION["logged_in"] == true)
     {
-        $gebruikersnaam = $_SESSION["gebruikersnaam"];
         echo "Ingelogd als: ";
-        echo $gebruikersnaam;
+        echo get_gebruikersnaam($_SESSION["gebruiker"]);
         
         echo "<form action='login.php' method='post'>
                 <input type='submit' name='loguit' value='Loguit'>
@@ -76,7 +75,6 @@ if(isset($_POST["login"]))
         echo "Ingelogd als: ".$gebruiker;
         $_SESSION["logged_in"] = true;
         $_SESSION["gebruiker"] = $gebruikersnr;
-        $_SESSION["gebruikersnaam"] = $gebruikersnaam;
     }
     else
     {
