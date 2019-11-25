@@ -32,16 +32,15 @@ if(!isset($_SESSION["logged_in"]))
                 Peilingnaam: <input type='text' name='titel'> <br>
                 Openbaar: <input type='checkbox' name='openbaar' value='1'> <br>
                 <input type='submit' name='maakpeiling' value='Maak een nieuwe peiling'>
-            <form>";
+            <form>
+            <br>";
         
-        echo "Uw peilngen: <br>";
-
         $mysql = mysqli_connect($server,$user,$pass,$db) 
             or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
 
         $resultaat = mysqli_query($mysql,"SELECT peilingnr, titel 
                                           FROM peilingen
-                                          WHERE gebruikersnr = '$gebruikersnr'") 
+                                          WHERE gebruikersnr = $_SESSION[gebruiker]") 
             or die("De query 1 op de database is mislukt!");
         
         mysqli_close($mysql) 
