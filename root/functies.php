@@ -1,24 +1,7 @@
 <?php
 include "connect.php";
 session_start();
-/*
-function count_rows($tabel)
-{
-    global $server, $user, $pass, $db;
-    $mysql = mysqli_connect($server,$user,$pass,$db) 
-        or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
-    
-    $resultaat = mysqli_query($mysql,"SELECT COUNT(*)
-                                      FROM '$tabel'") 
-        or die("De query 1 op de database is mislukt!");
-    
-    mysqli_close($mysql) 
-        or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
 
-    list($count) = mysqli_fetch_row($resultaat);
-    return $count;
-}
-*/
 function count_vragen($peilingnr)
 {
     global $server, $user, $pass, $db;
@@ -135,12 +118,13 @@ function get_vraag($vraagnr)
 
 function bewerk_peiling($peilingnr)
 {
-    echo "<form action='creator.php?nr='$peilingnr' method='post'>";
+    echo "<form action='creator.php?nr=$peilingnr' method='post'>";
     for ($i = 1; $i <= count_vragen($peilingnr); $i++)
     {
         echo "Vraag ".$i.": ";
         $vraag = get_vraag($i);
-        echo "<input type='text' name='vraag' value='$vraag'><br>";
+        echo "<input type='text' name='vraag$i' value='$vraag'>&nbsp;";
+        echo "Openbaar: <input type='checkbox' name='openbaar$i' value='1'> <br>";
         echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <input type='submit' name='add_antwoord' value='+'><br>";
     }

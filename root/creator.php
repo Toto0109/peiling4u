@@ -83,4 +83,35 @@ if(isset($_POST["maakpeiling"]))
 
     header("Refresh:0");
 }
+
+if(isset($_POST["save"]))
+{
+    $mysql = mysqli_connect($server,$user,$pass,$db) 
+        or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
+
+    for ($i = 1; $i <= count_vragen($_GET["nr"]); $i++)
+    {
+        $vraag = mysqli_real_escape_string($mysql, $_POST["vraag$i"]);
+        if(isset($_POST["openbaar$i"]))
+        {
+            $openbaar = 1;
+        }
+        else
+        {
+            $openbaar = 0;
+        }
+
+        $peilingnr = $_GET["nr"];
+        echo $i.$vraag.$openbaar.$peilingnr;
+        mysqli_query($mysql,"UPDATE vragen
+                             SET vraag='$vraag', meerdere_antwoorden='$openbaar'
+                             WHERE peilingnr = '$peilingnr' AND vraagnr = '$i'") 
+        or die("De insertquery op de database is mislukt!"); 
+
+        mysqli_close($mysql) 
+            or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+        
+        //header("Refresh:0");
+    }
+}
 ?>
