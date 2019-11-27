@@ -116,6 +116,25 @@ function get_vraag($vraagnr)
     return $vraag;
 }
 
+function get_antwoord($vraagnr, $antwoordnr)
+{
+    global $server, $user, $pass, $db;
+    $mysql = mysqli_connect($server,$user,$pass,$db) 
+        or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
+    
+    $resultaat = mysqli_query($mysql,"SELECT antwoord
+                                      FROM antwoorden
+                                      WHERE vraagnr = '$vraagnr' AND antwoordnr = '$antwoordnr'") 
+        or die("De query 1 op de database is mislukt!");
+     
+    mysqli_close($mysql) 
+        or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+
+    list($antwoord) = mysqli_fetch_row($resultaat);
+    return $antwoord;
+
+}
+
 function bewerk_peiling($peilingnr)
 {
     echo "<form action='creator.php?nr=$peilingnr' method='post'>";
@@ -124,8 +143,15 @@ function bewerk_peiling($peilingnr)
         echo "Vraag ".$i.": ";
         $vraag = get_vraag($i);
         echo "<input type='text' name='vraag$i' value='$vraag'>&nbsp;";
-        echo "Openbaar: <input type='checkbox' name='openbaar$i' value='1'> <br>";
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        echo "Meerdere antwoorden mogelijk: <input type='checkbox' name='openbaar$i' value='1'> <br>";
+        for ($j = 1; $j <= count_antwoorden($peilingnr, $i); $j++)
+        {
+            echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+            echo "$j: ";
+            $antwoord = get_antwoord($i, $j);
+            echo "<input type='text' name='antwoord$i$j' value='$antwoord'><br>";
+        }
+        echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <input type='submit' name='add_antwoord' value='+'><br>";
     }
     echo "<input type='submit' name='add_vraag' value='+'> <br>";
