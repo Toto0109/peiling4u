@@ -152,10 +152,53 @@ function bewerk_peiling($peilingnr)
             echo "<input type='text' name='antwoord$i$j' value='$antwoord'><br>";
         }
         echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <input type='submit' name='add_antwoord' value='+'><br>";
+              <input type='submit' name='add_antwoord$i' value='+'><br>";
     }
     echo "<input type='submit' name='add_vraag' value='+'> <br>";
     echo "<input type='submit' name='save' value='Sla de peiling op'> <br>";
     echo "</form>";
+}
+
+function save_peiling()
+{
+    global $server, $user, $pass, $db;
+    $peilingnr = $_GET["nr"];
+    
+    $mysql = mysqli_connect($server,$user,$pass,$db) 
+        or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
+
+    for ($i = 1; $i <= count_vragen($_GET["nr"]); $i++)
+    {
+        $vraag = mysqli_real_escape_string($mysql, $_POST["vraag$i"]);
+        if(isset($_POST["m_antwoorden$i"]))
+        {
+            $m_antwoorden = 1;
+        }
+        else
+        {
+            $m_antwoorden = 0;
+        }
+                
+        mysqli_query($mysql,"UPDATE vragen
+                             SET vraag='$vraag', meerdere_antwoorden='$m_antwoorden'
+                             WHERE peilingnr = '$peilingnr' AND vraagnr = '$i'") 
+            or die("De insertquery op de database is mislukt!"); 
+
+        for($j = 1; $j <= count_antwoorden($_GET["nr"], $i); $j++) 
+        {
+            $antwoord = mysqli_real_escape_string($mysql, $_POST["antwoord$i$j"]);
+
+            mysqli_query($mysql, "UPDATE antwoorden
+                                  SET antwoord = '$antwoord'
+                                  WHERE peilingnr = '$peilingnr' AND vraagnr = '$i' AND antwoordnr = '$j'")
+            or die("De insertquery op de database is mislukt!");
+        }
+    }
+
+    mysqli_close($mysql) 
+        or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+    
+    header("Refresh:0");
+
 }
 ?>
