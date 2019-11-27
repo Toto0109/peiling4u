@@ -143,7 +143,7 @@ function bewerk_peiling($peilingnr)
         echo "Vraag ".$i.": ";
         $vraag = get_vraag($i);
         echo "<input type='text' name='vraag$i' value='$vraag'>&nbsp;";
-        echo "Meerdere antwoorden mogelijk: <input type='checkbox' name='openbaar$i' value='1'> <br>";
+        echo "Meerdere antwoorden mogelijk: <input type='checkbox' name='m_antwoorden$i' value='1'> <br>";
         for ($j = 1; $j <= count_antwoorden($peilingnr, $i); $j++)
         {
             echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";

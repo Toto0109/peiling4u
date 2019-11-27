@@ -94,17 +94,17 @@ if(isset($_POST["save"]))
     for ($i = 1; $i <= count_vragen($_GET["nr"]); $i++)
     {
         $vraag = mysqli_real_escape_string($mysql, $_POST["vraag$i"]);
-        if(isset($_POST["openbaar$i"]))
+        if(isset($_POST["m_antwoorden$i"]))
         {
-            $openbaar = 1;
+            $m_antwoorden = 1;
         }
         else
         {
-            $openbaar = 0;
+            $m_antwoorden = 0;
         }
                 
         mysqli_query($mysql,"UPDATE vragen
-                             SET vraag='$vraag', meerdere_antwoorden='$openbaar'
+                             SET vraag='$vraag', meerdere_antwoorden='$m_antwoorden'
                              WHERE peilingnr = '$peilingnr' AND vraagnr = '$i'") 
             or die("De insertquery op de database is mislukt!"); 
 
@@ -112,8 +112,6 @@ if(isset($_POST["save"]))
         {
             $antwoord = mysqli_real_escape_string($mysql, $_POST["antwoord$i$j"]);
 
-            echo "antwoord$i$j: ";
-            echo $_POST["antwoord$i$j"]."<br>";
             mysqli_query($mysql, "UPDATE antwoorden
                                   SET antwoord = '$antwoord'
                                   WHERE peilingnr = '$peilingnr' AND vraagnr = '$i' AND antwoordnr = '$j'")
@@ -124,6 +122,6 @@ if(isset($_POST["save"]))
     mysqli_close($mysql) 
         or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
     
-//    header("Refresh:0");
+    header("Refresh:0");
 }
 ?>
