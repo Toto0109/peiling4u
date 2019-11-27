@@ -98,7 +98,7 @@ function get_gebruikersnr($peilingnr)
     return $gebruikersnr;
 }
 
-function get_vraag($vraagnr)
+function get_vraag($peilingnr, $vraagnr)
 {
     global $server, $user, $pass, $db;
     $mysql = mysqli_connect($server,$user,$pass,$db) 
@@ -106,7 +106,7 @@ function get_vraag($vraagnr)
     
     $resultaat = mysqli_query($mysql,"SELECT vraag
                                       FROM vragen
-                                      WHERE vraagnr = '$vraagnr'") 
+                                      WHERE peilingnr = '$peilingnr' AND vraagnr = '$vraagnr'") 
         or die("De query 1 op de database is mislukt!");
      
     mysqli_close($mysql) 
@@ -116,7 +116,25 @@ function get_vraag($vraagnr)
     return $vraag;
 }
 
-function get_antwoord($vraagnr, $antwoordnr)
+function get_m_antwoorden($peilingnr, $vraagnr)
+{
+    global $server, $user, $pass, $db;
+    $mysql = mysqli_connect($server,$user,$pass,$db) 
+        or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
+    
+    $resultaat = mysqli_query($mysql,"SELECT meerdere_antwoorden
+                                      FROM vragen
+                                      WHERE peilingnr = '$peilingnr' AND vraagnr = '$vraagnr'") 
+        or die("De query 1 op de database is mislukt!");
+     
+    mysqli_close($mysql) 
+        or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+
+    list($m_antwoorden) = mysqli_fetch_row($resultaat);
+    return $m_antwoorden;
+
+}
+function get_antwoord($peilingnr, $vraagnr, $antwoordnr)
 {
     global $server, $user, $pass, $db;
     $mysql = mysqli_connect($server,$user,$pass,$db) 
@@ -124,7 +142,7 @@ function get_antwoord($vraagnr, $antwoordnr)
     
     $resultaat = mysqli_query($mysql,"SELECT antwoord
                                       FROM antwoorden
-                                      WHERE vraagnr = '$vraagnr' AND antwoordnr = '$antwoordnr'") 
+                                      WHERE peilingnr = '$peiingnr' AND vraagnr = '$vraagnr' AND antwoordnr = '$antwoordnr'") 
         or die("De query 1 op de database is mislukt!");
      
     mysqli_close($mysql) 
@@ -140,15 +158,25 @@ function bewerk_peiling($peilingnr)
     echo "<form action='creator.php?nr=$peilingnr' method='post'>";
     for ($i = 1; $i <= count_vragen($peilingnr); $i++)
     {
+        $vraag = get_vraag($peilingnr, $i);
+        $m_antwoorden = get_m_antwoorden($peilingnr, $i);
         echo "Vraag ".$i.": ";
-        $vraag = get_vraag($i);
         echo "<input type='text' name='vraag$i' value='$vraag'>&nbsp;";
-        echo "Meerdere antwoorden mogelijk: <input type='checkbox' name='m_antwoorden$i' value='1'> <br>";
+        echo "Meerdere antwoorden mogelijk: <input type='checkbox' name='m_antwoorden$i' value='1'";
+        if($m_antwoorden == true)
+        {
+            echo " checked><br>";
+        }
+        else
+        {
+            echo "><br>";
+        }
+
         for ($j = 1; $j <= count_antwoorden($peilingnr, $i); $j++)
         {
             echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
             echo "$j: ";
-            $antwoord = get_antwoord($i, $j);
+            $antwoord = get_antwoord($peilingnr, $i, $j);
             echo "<input type='text' name='antwoord$i$j' value='$antwoord'><br>";
         }
         echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -197,8 +225,5 @@ function save_peiling()
 
     mysqli_close($mysql) 
         or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
-    
-    header("Refresh:0");
-
 }
 ?>

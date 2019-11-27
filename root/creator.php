@@ -87,6 +87,33 @@ if(isset($_POST["maakpeiling"]))
 if(isset($_POST["save"]))
 {
     save_peiling();
+    header("Refresh:0");
 }
 
+if(isset($_POST["add_vraag"]))
+{
+    $peilingnr = $_GET["nr"];
+    save_peiling();
+
+    $mysql = mysqli_connect($server,$user,$pass,$db) 
+        or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
+
+    $resultaat = mysqli_query($mysql,"SELECT MAX(vraagnr)
+                         FROM vragen
+                         WHERE peilingnr = '$peilingnr'")
+        or die("De insertquery op de database is mislukt!"); 
+    
+    list($max_vraagnr) = mysqli_fetch_row($resultaat);
+    $nieuwe_vraagnr = $max_vraagnr + 1;
+    
+    mysqli_query($mysql,"INSERT INTO vragen(peilingnr, vraagnr)
+                         VALUES('$peilingnr','$nieuwe_vraagnr')") 
+        or die("De insertquery op de database is mislukt!"); 
+    
+    mysqli_close($mysql) 
+        or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+
+    header("Refresh:0");
+
+}
 ?>
