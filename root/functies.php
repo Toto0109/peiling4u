@@ -142,7 +142,7 @@ function get_antwoord($peilingnr, $vraagnr, $antwoordnr)
     
     $resultaat = mysqli_query($mysql,"SELECT antwoord
                                       FROM antwoorden
-                                      WHERE peilingnr = '$peiingnr' AND vraagnr = '$vraagnr' AND antwoordnr = '$antwoordnr'") 
+                                      WHERE peilingnr = '$peilingnr' AND vraagnr = '$vraagnr' AND antwoordnr = '$antwoordnr'") 
         or die("De query 1 op de database is mislukt!");
      
     mysqli_close($mysql) 
@@ -180,7 +180,7 @@ function bewerk_peiling($peilingnr)
             echo "<input type='text' name='antwoord$i$j' value='$antwoord'><br>";
         }
         echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <input type='submit' name='add_antwoord$i' value='+'><br>";
+              <input type='submit' name='add_antwoord[$i]' value='+'><br>";
     }
     echo "<input type='submit' name='add_vraag' value='+'> <br>";
     echo "<input type='submit' name='save' value='Sla de peiling op'> <br>";
