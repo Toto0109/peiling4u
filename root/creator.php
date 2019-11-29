@@ -98,12 +98,7 @@ if(isset($_POST["add_vraag"]))
     $mysql = mysqli_connect($server,$user,$pass,$db) 
         or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
 
-    $resultaat = mysqli_query($mysql,"SELECT MAX(vraagnr)
-                         FROM vragen
-                         WHERE peilingnr = '$peilingnr'")
-        or die("De selectquery op de database is mislukt!"); 
-    
-    list($max_vraagnr) = mysqli_fetch_row($resultaat);
+    $max_vraagnr = max_vraagnr($peilingnr);
     $nieuwe_vraagnr = $max_vraagnr + 1;
     
     mysqli_query($mysql,"INSERT INTO vragen(peilingnr, vraagnr)
@@ -126,12 +121,7 @@ if(isset($_POST["add_antwoord"]))
     $mysql = mysqli_connect($server,$user,$pass,$db) 
         or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
 
-    $resultaat = mysqli_query($mysql,"SELECT MAX(antwoordnr)
-                         FROM antwoorden
-                         WHERE peilingnr = '$peilingnr' AND vraagnr = '$vraagnr'")
-        or die("De selectquery op de database is mislukt!"); 
-    
-    list($max_antwoordnr) = mysqli_fetch_row($resultaat);
+    $max_antwoordnr = max_antwoordnr($peilingnr, $vraagnr);
     $nieuwe_antwoordnr = $max_antwoordnr + 1;
     
     mysqli_query($mysql,"INSERT INTO antwoorden(peilingnr, vraagnr, antwoordnr)
@@ -143,5 +133,34 @@ if(isset($_POST["add_antwoord"]))
 
     header("Refresh:0");
 
+}
+
+if(isset($_POST["del_vraag"]))
+{
+    $peilingnr = $_GET["nr"];
+    $vraagnr = array_pop(array_keys($_REQUEST["del_vraag"]));
+    save_peiling();
+
+    $mysql = mysqli_connect($server,$user,$pass,$db) 
+        or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
+
+    // Delete de vraag
+    mysqli_query($mysql,"DELETE FROM vragen
+                         WHERE peilingnr = '$peilingnr' AND vraagnr = '$vraagnr'")
+        or die("De deletequery op de database is mislukt!"); 
+    
+    // Alle vraagnrs boven de verwijderde vraag -1
+    for($i = $vraagnr + 1; $i <= max_vraagnr($peilingnr); $i++)
+    {
+        mysqli_query($mysql, "UPDATE vragen
+                              SET vraagnr = vraagnr - 1
+                              WHERE peilingnr = '$peilingnr' AND vraagnr = '$i'")
+            or die("De updatequery op de databse is mislukt!");
+    }
+    
+    mysqli_close($mysql) 
+        or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+
+    header("Refresh:0");
 }
 ?>

@@ -165,22 +165,22 @@ function bewerk_peiling($peilingnr)
         echo "Meerdere antwoorden mogelijk: <input type='checkbox' name='m_antwoorden$i' value='1'";
         if($m_antwoorden == true)
         {
-            echo " checked><br>";
+            echo " checked>";
         }
         else
         {
-            echo "><br>";
+            echo ">";
         }
+        echo "<input type='submit' name='del_vraag[$i]' value='x'><br>";
 
         for ($j = 1; $j <= count_antwoorden($peilingnr, $i); $j++)
         {
-            echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-            echo "$j: ";
+            echo "Antwoord $j: ";
             $antwoord = get_antwoord($peilingnr, $i, $j);
-            echo "<input type='text' name='antwoord$i$j' value='$antwoord'><br>";
+            echo "<input type='text' name='antwoord$i$j' value='$antwoord'>
+                  <input type='submit' name='del_antwoord[$i][$j]' value='x'><br>";
         }
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <input type='submit' name='add_antwoord[$i]' value='+'><br>";
+        echo "<input type='submit' name='add_antwoord[$i]' value='+'><br>";
     }
     echo "<input type='submit' name='add_vraag' value='+'> <br>";
     echo "<input type='submit' name='save' value='Sla de peiling op'> <br>";
@@ -225,5 +225,41 @@ function save_peiling()
 
     mysqli_close($mysql) 
         or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+}
+
+function max_vraagnr($peilingnr)
+{
+    global $server, $user, $pass, $db;
+    $mysql = mysqli_connect($server,$user,$pass,$db) 
+        or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
+
+    $resultaat = mysqli_query($mysql,"SELECT MAX(vraagnr)
+                                      FROM vragen
+                                      WHERE peilingnr = '$peilingnr'")
+        or die("De selectquery op de database is mislukt!"); 
+
+    mysqli_close($mysql) 
+        or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+    
+    list($max_vraagnr) = mysqli_fetch_row($resultaat);
+    return $max_vraagnr;
+}
+
+function max_antwoordnr($peilingnr, $vraagnr)
+{
+    global $server, $user, $pass, $db;
+    $mysql = mysqli_connect($server,$user,$pass,$db) 
+        or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
+
+    $resultaat = mysqli_query($mysql,"SELECT MAX(antwoordnr)
+                                      FROM antwoorden
+                                      WHERE peilingnr = '$peilingnr' AND vraagnr = '$vraagnr'")
+        or die("De selectquery op de database is mislukt!"); 
+
+    mysqli_close($mysql) 
+        or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+    
+    list($max_antwoordnr) = mysqli_fetch_row($resultaat);
+    return $max_antwoordnr;
 }
 ?>
