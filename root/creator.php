@@ -163,4 +163,36 @@ if(isset($_POST["del_vraag"]))
 
     header("Refresh:0");
 }
+
+if(isset($_POST["del_antwoord"]))
+{
+    $peilingnr = $_GET["nr"];
+    $vraagnr = array_pop(array_keys($_REQUEST["del_antwoord"]));
+    $antwoordnr = array_pop(array_keys($_REQUEST["del_antwoord"][$vraagnr]));
+    save_peiling();
+
+    $mysql = mysqli_connect($server,$user,$pass,$db) 
+        or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
+
+    // Delete het antwoord
+    mysqli_query($mysql,"DELETE FROM antwoorden
+                         WHERE peilingnr = '$peilingnr' AND vraagnr = '$vraagnr' AND antwoordnr = '$antwoordnr'")
+        or die("De deletequery op de database is mislukt!"); 
+    
+    // Alle antwoordnrs boven het verwijderde antwoord -1
+    for($i = $antwoordnr + 1; $i <= max_antwoordnr($peilingnr, $vraagnr); $i++)
+    {
+        mysqli_query($mysql, "UPDATE antwoorden
+                              SET antwoordnr = antwoordnr - 1
+                              WHERE peilingnr = '$peilingnr' AND vraagnr = '$vraagnr' AND antwoordnr = '$i'")
+            or die("De updatequery op de databse is mislukt!");
+    }
+    
+    mysqli_close($mysql) 
+        or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+
+    header("Refresh:0");
+
+
+}
 ?>
