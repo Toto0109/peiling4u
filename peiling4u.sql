@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 27, 2019 at 10:21 PM
+-- Generation Time: Nov 29, 2019 at 03:21 PM
 -- Server version: 10.4.10-MariaDB
 -- PHP Version: 7.3.11
 
@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `peiling`
+-- Database: `peiling4u`
 --
 
 -- --------------------------------------------------------
@@ -128,7 +128,7 @@ ALTER TABLE `peilingen`
 -- Constraints for table `antwoorden`
 --
 ALTER TABLE `antwoorden`
-  ADD CONSTRAINT `antwoorden_ibfk_1` FOREIGN KEY (`peilingnr`,`vraagnr`) REFERENCES `vragen` (`peilingnr`, `vraagnr`);
+  ADD CONSTRAINT `antwoorden_ibfk_1` FOREIGN KEY (`peilingnr`,`vraagnr`) REFERENCES `vragen` (`peilingnr`, `vraagnr`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `peilingen`
