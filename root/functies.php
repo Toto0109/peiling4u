@@ -150,6 +150,24 @@ function get_peilingtitel($peilingnr)
    
 }
 
+function get_openbaar($peilingnr)
+{
+    global $server, $user, $pass, $db;
+    $mysql = mysqli_connect($server,$user,$pass,$db) 
+        or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
+    
+    $resultaat = mysqli_query($mysql,"SELECT openbaar
+                                      FROM peilingen
+                                      WHERE peilingnr = '$peilingnr'")
+        or die("De query 1 op de database is mislukt!");
+     
+    mysqli_close($mysql) 
+        or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+
+    list($openbaar) = mysqli_fetch_row($resultaat);
+    return $openbaar;
+
+}
 function save_peiling()
 {
     global $server, $user, $pass, $db;
@@ -157,6 +175,21 @@ function save_peiling()
     
     $mysql = mysqli_connect($server,$user,$pass,$db) 
         or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
+
+    $titel = mysqli_real_escape_string($mysql, $_POST["titel"]);
+    if(isset($_POST["openbaar"]))
+    {
+        $openbaar = 1;
+    }
+    else 
+    {
+        $openbaar = 0;
+    }
+
+    mysqli_query($mysql,"UPDATE peilingen
+                         SET titel = '$titel', openbaar = '$openbaar'
+                         WHERE peilingnr = '$peilingnr'") 
+        or die("De insertquery op de database is mislukt!"); 
 
     for ($i = 1; $i <= count_vragen($_GET["nr"]); $i++)
     {

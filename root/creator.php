@@ -19,14 +19,35 @@ if(!isset($_SESSION["logged_in"]))
 <body>
     <a href="index.php">Home</a> <br>
     <?php
+    if($_SESSION["logged_in"] == true)
+    {
+        echo "Ingelogd als: ";
+        echo get_gebruikersnaam($_SESSION["gebruiker"])."<br>";
+        echo "<form action='login.php' method='post'>
+                <input type='submit' name='loguit' value='Loguit'>
+              </form>";
+    }
     if(isset($_GET["nr"]))
     {
-
+        
         if ($_SESSION["gebruiker"] == get_gebruikersnr($_GET["nr"]))
         {
             $peilingnr = $_GET["nr"];
-            echo get_peilingtitel($peilingnr);
+            $titel = get_peilingtitel($peilingnr);
+            $openbaar = get_openbaar($peilingnr);
+
             echo "<form action='creator.php?nr=$peilingnr' method='post'>";
+            echo "<input type='text' name='titel' value='$titel'>";
+            echo "<input type='checkbox' name='openbaar' value='1'";
+            if($openbaar == true)
+            {
+                echo " checked>";
+            }
+            else
+            {
+                echo ">";
+            }
+            echo "Openbaar<br>";
             for ($i = 1; $i <= count_vragen($peilingnr); $i++)
             {
                 $vraag = get_vraag($peilingnr, $i);
@@ -65,13 +86,7 @@ if(!isset($_SESSION["logged_in"]))
     else if($_SESSION["logged_in"] == true)
     {
         $gebruikersnr = $_SESSION["gebruiker"];
-        echo "Ingelogd als: ";
-        echo get_gebruikersnaam($gebruikersnr);
-        
-        echo "<form action='login.php' method='post'>
-                <input type='submit' name='loguit' value='Loguit'>
-            </form>";
-        
+       
         echo "<form action='creator.php' method='post'>
                 Peilingnaam: <input type='text' name='titel'> <br>
                 Openbaar: <input type='checkbox' name='openbaar' value='1'> <br>
