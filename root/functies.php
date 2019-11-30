@@ -57,29 +57,6 @@ function get_gebruikersnaam($gebruikersnr)
     return $gebruikersnaam;
 }
 
-function list_peilingen($gebruikersnr)
-{
-    global $server, $user, $pass, $db;
-    
-    $mysql = mysqli_connect($server,$user,$pass,$db) 
-            or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
-
-    $resultaat = mysqli_query($mysql,"SELECT peilingnr, titel 
-                                      FROM peilingen
-                                      WHERE gebruikersnr = '$gebruikersnr'") 
-        or die("De query 1 op de database is mislukt!");
-        
-    mysqli_close($mysql) 
-        or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
-        
-    echo "Uw peilngen: <br>";
-    while(list($peilingnr, $peilingtitel) = mysqli_fetch_row($resultaat))  
-    {
-        echo"<a href='creator.php?nr=$peilingnr'>$peilingtitel<a/><br />"; 
-    }
-
-}
-
 function get_gebruikersnr($peilingnr)
 {
     global $server, $user, $pass, $db;
@@ -171,40 +148,6 @@ function get_peilingtitel($peilingnr)
     return $peilingtitel;
 
    
-}
-function bewerk_peiling($peilingnr)
-{
-    echo get_peilingtitel($peilingnr);
-    echo "<form action='creator.php?nr=$peilingnr' method='post'>";
-    for ($i = 1; $i <= count_vragen($peilingnr); $i++)
-    {
-        $vraag = get_vraag($peilingnr, $i);
-        $m_antwoorden = get_m_antwoorden($peilingnr, $i);
-        echo "Vraag ".$i.": ";
-        echo "<input type='text' name='vraag$i' value='$vraag'>&nbsp;";
-        echo "Meerdere antwoorden mogelijk: <input type='checkbox' name='m_antwoorden$i' value='1'";
-        if($m_antwoorden == true)
-        {
-            echo " checked>";
-        }
-        else
-        {
-            echo ">";
-        }
-        echo "<input type='submit' name='del_vraag[$i]' value='x'><br>";
-
-        for ($j = 1; $j <= count_antwoorden($peilingnr, $i); $j++)
-        {
-            echo "Antwoord $j: ";
-            $antwoord = get_antwoord($peilingnr, $i, $j);
-            echo "<input type='text' name='antwoord$i$j' value='$antwoord'>
-                  <input type='submit' name='del_antwoord[$i][$j]' value='x'><br>";
-        }
-        echo "<input type='submit' name='add_antwoord[$i]' value='+'><br>";
-    }
-    echo "<input type='submit' name='add_vraag' value='+'> <br>";
-    echo "<input type='submit' name='save' value='Sla de peiling op'> <br>";
-    echo "</form>";
 }
 
 function save_peiling()
