@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 29, 2019 at 03:21 PM
+-- Generation Time: Nov 30, 2019 at 03:47 PM
 -- Server version: 10.4.10-MariaDB
 -- PHP Version: 7.3.11
 
@@ -32,8 +32,7 @@ CREATE TABLE `antwoorden` (
   `peilingnr` int(11) NOT NULL,
   `vraagnr` int(11) NOT NULL,
   `antwoordnr` int(11) NOT NULL,
-  `antwoord` text NOT NULL,
-  `aantal` int(11) NOT NULL DEFAULT 0
+  `antwoord` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -61,6 +60,19 @@ CREATE TABLE `peilingen` (
   `titel` varchar(30) NOT NULL,
   `openbaar` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `resultaten`
+--
+
+CREATE TABLE `resultaten` (
+  `peilingnr` int(11) NOT NULL,
+  `vraagnr` int(11) NOT NULL,
+  `gebruikersnr` int(11) NOT NULL,
+  `antwoord` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -99,6 +111,13 @@ ALTER TABLE `peilingen`
   ADD KEY `gebruikersnr` (`gebruikersnr`);
 
 --
+-- Indexes for table `resultaten`
+--
+ALTER TABLE `resultaten`
+  ADD KEY `peilingnr` (`peilingnr`,`vraagnr`),
+  ADD KEY `gebruikersnr` (`gebruikersnr`);
+
+--
 -- Indexes for table `vragen`
 --
 ALTER TABLE `vragen`
@@ -112,13 +131,13 @@ ALTER TABLE `vragen`
 -- AUTO_INCREMENT for table `gebruikers`
 --
 ALTER TABLE `gebruikers`
-  MODIFY `gebruikersnr` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `gebruikersnr` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `peilingen`
 --
 ALTER TABLE `peilingen`
-  MODIFY `peilingnr` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `peilingnr` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -135,6 +154,13 @@ ALTER TABLE `antwoorden`
 --
 ALTER TABLE `peilingen`
   ADD CONSTRAINT `peilingen_ibfk_1` FOREIGN KEY (`gebruikersnr`) REFERENCES `gebruikers` (`gebruikersnr`);
+
+--
+-- Constraints for table `resultaten`
+--
+ALTER TABLE `resultaten`
+  ADD CONSTRAINT `resultaten_ibfk_1` FOREIGN KEY (`peilingnr`,`vraagnr`) REFERENCES `vragen` (`peilingnr`, `vraagnr`),
+  ADD CONSTRAINT `resultaten_ibfk_2` FOREIGN KEY (`gebruikersnr`) REFERENCES `gebruikers` (`gebruikersnr`);
 
 --
 -- Constraints for table `vragen`
