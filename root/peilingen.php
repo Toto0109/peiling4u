@@ -27,6 +27,10 @@ if(!isset($_SESSION["logged_in"]))
                   <input type='submit' name='loguit' value='Loguit'>
               </form>";
     }
+    else 
+    {
+        echo "U bent niet ingelogd";
+    }
     if(isset($_GET["nr"]))
     {
         if (get_openbaar($_GET["nr"]) == 1)
@@ -49,11 +53,11 @@ if(!isset($_SESSION["logged_in"]))
                 
                 for ($j = 1; $j <= count_antwoorden($peilingnr, $i, $j); $j++)
                 {
-                    echo "<input type='$selecttype' name='vraag$i' value='$j'>";
+                    echo "<input type='$selecttype' name='vraag$i"."[]' value='$j'>";
                     echo get_antwoord($peilingnr, $i, $j)."<br>";
                 }
             } 
-            echo "<input type='submit' name='verzend' value='Verzend'> <br>";
+            echo "<input type='submit' name='verzend' value='Verzend'>";
             echo "</form>";
         }
         else
@@ -61,7 +65,7 @@ if(!isset($_SESSION["logged_in"]))
             echo "Deze peiling is niet openbaar";
         }
     }
-    else 
+    else if($_SESSION["logged_in"] == true) 
     {
         $gebruikersnr = $_SESSION["gebruiker"];
         
@@ -85,3 +89,43 @@ if(!isset($_SESSION["logged_in"]))
     ?>
 </body>
 </html>
+
+<?php
+if(isset($_POST["verzend"]))
+{
+    $peilingnr = $_GET["nr"];
+    $gebruikersnr = $_SESSION["gebruiker"];
+    echo "Peilingnr: ".$peilingnr."<br> Gebruikersnr: ".$gebruikersnr;
+
+    $mysql = mysqli_connect($server,$user,$pass,$db) 
+        or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
+    
+    for ($i = 1; $i <= count_vragen($peilingnr); $i++)
+    {
+        if(get_m_antwoorden($peilingnr, $i) == 1)
+        {
+            echo "<br> Vraag: ".$i;
+            $cunt = count($_POST["vraag$i"]);
+            echo "<br> Count: ".$cunt;
+            
+            foreach($_POST(["vraag$i"]) as $antwoord)
+            {
+                echo "<br> Antwoord: ".$antwoord;
+            }
+        }
+        else
+        {
+            $antwoord = $_POST["vraag$i"];
+            echo "<br> Vraag: ".$i;
+            echo "<br> Antwoord: ".$antwoord;
+        }
+                /*
+        mysqli_query($mysql, "INSERT INTO resultaten(peilingnr, vraagnr, gebruikersnr, antwoord)
+                              VALUES ($peilingnr, $i, $gebruikersnr, $antwoord)")
+                              or die("De insertquery op de database is mislukt!");*/
+    }
+
+    mysqli_close($mysql)
+        or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+}
+?>
