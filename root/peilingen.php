@@ -42,8 +42,8 @@ if(!isset($_SESSION["logged_in"]))
             {
                echo "Vraag $i: ".get_vraag($peilingnr, $i)."<br>";
                 
-                for ($j = 1; $j <= count_antwoorden($peilingnr, $i, $j); $j++)
-                {
+               for ($j = 1; $j <= count_antwoorden($peilingnr, $i, $j); $j++)
+               {
                    if(get_m_antwoorden($peilingnr, $i) == 1)
                     {
                         echo "<input type='checkbox' name='vraag$i"."[]' value='$j'>";
@@ -53,7 +53,7 @@ if(!isset($_SESSION["logged_in"]))
                         echo "<input type='radio' name='vraag$i' value='$j'>";
                     }
                     echo get_antwoord($peilingnr, $i, $j)."<br>";
-                }
+               }
             } 
             echo "<input type='submit' name='verzend' value='Verzend'>";
             echo "</form>";
@@ -103,11 +103,9 @@ if(isset($_POST["verzend"]))
         if(get_m_antwoorden($peilingnr, $i) == 1)
         {
             $antwoord = $_POST["vraag$i"];
-            echo "<br> Vraag: ".$i;
-            $cunt = count($antwoord);
-            echo "<br> Count: ".$cunt;
+            $N = count($antwoord);
             
-            for($j = 0; $j < $cunt; $j++)
+            for($j = 0; $j < $N; $j++)
             {
                 echo "<br> Antwoord: ".$antwoord[$j];
                 mysqli_query($mysql, "INSERT INTO resultaten(peilingnr, vraagnr, gebruikersnr, antwoord)
@@ -118,8 +116,6 @@ if(isset($_POST["verzend"]))
         else
         {
             $antwoord = $_POST["vraag$i"];
-            echo "<br> Vraag: ".$i;
-            echo "<br> Antwoord: ".$antwoord;
             mysqli_query($mysql, "INSERT INTO resultaten(peilingnr, vraagnr, gebruikersnr, antwoord)
                                   VALUES ($peilingnr, $i, $gebruikersnr, $antwoord)")
                 or die("De insertquery op de database is mislukt!");
