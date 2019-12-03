@@ -33,6 +33,8 @@ if(!isset($_SESSION["logged_in"]))
     }
     if(isset($_GET["nr"]))
     {
+        $gebruikersnr = $_SESSION["gebruiker"];
+
         if (get_openbaar($_GET["nr"]) == 1)
         {
             $peilingnr = $_GET["nr"];
@@ -55,8 +57,34 @@ if(!isset($_SESSION["logged_in"]))
                     echo get_antwoord($peilingnr, $i, $j)."<br>";
                }
             } 
-            echo "<input type='submit' name='verzend' value='Verzend'>";
-            echo "</form>";
+            $mysql = mysqli_connect($server,$user,$pass,$db) 
+                or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
+
+            $resultaat = mysqli_query($mysql,"SELECT DISTINCT gebruikersnr
+                                              FROM resultaten
+                                              WHERE peilingnr = '$peilingnr'") 
+                or die("De query 1 op de database is mislukt!");
+        
+            mysqli_close($mysql) 
+                or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+
+            while(list($gebruikers) = mysqli_fetch_row($resultaat))
+            {
+                if($gebruikersnr == $gebruikers)
+                {
+                    $ingevuld = true;
+                }
+            }
+
+            if ($ingevuld)
+            {
+                echo "je hebt de peiling al ingevuld";
+            }
+            else 
+            {
+                echo "<input type='submit' name='verzend' value='Verzend'>";
+            }
+        echo "</form>";
         }
         else
         {
@@ -93,7 +121,6 @@ if(isset($_POST["verzend"]))
 {
     $peilingnr = $_GET["nr"];
     $gebruikersnr = $_SESSION["gebruiker"];
-    echo "Peilingnr: ".$peilingnr."<br> Gebruikersnr: ".$gebruikersnr;
 
     $mysql = mysqli_connect($server,$user,$pass,$db) 
         or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
@@ -107,7 +134,6 @@ if(isset($_POST["verzend"]))
             
             for($j = 0; $j < $N; $j++)
             {
-                echo "<br> Antwoord: ".$antwoord[$j];
                 mysqli_query($mysql, "INSERT INTO resultaten(peilingnr, vraagnr, gebruikersnr, antwoord)
                                       VALUES ($peilingnr, $i, $gebruikersnr, $antwoord[$j])")
                     or die("De insertquery op de database is mislukt!");
