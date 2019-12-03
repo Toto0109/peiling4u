@@ -40,25 +40,11 @@ if(!isset($_SESSION["logged_in"]))
             echo "<form action='peilingen.php?nr=$peilingnr' method='post'>";
             for ($i = 1; $i <= count_vragen($peilingnr); $i++)
             {
-                /*
-                if(get_m_antwoorden($peilingnr, $i) == 1)
-                {
-                    $selecttype = "checkbox";
-                }
-                else
-                {
-                    $selecttype = "radio";
-                }
-                 */
-                echo "Vraag $i: ".get_vraag($peilingnr, $i)."<br>";
+               echo "Vraag $i: ".get_vraag($peilingnr, $i)."<br>";
                 
                 for ($j = 1; $j <= count_antwoorden($peilingnr, $i, $j); $j++)
                 {
-                    /*
-                    echo "<input type='$selecttype' name='vraag$i' value='$j'>";
-                    echo get_antwoord($peilingnr, $i, $j)."<br>";
-                     */
-                    if(get_m_antwoorden($peilingnr, $i) == 1)
+                   if(get_m_antwoorden($peilingnr, $i) == 1)
                     {
                         echo "<input type='checkbox' name='vraag$i"."[]' value='$j'>";
                     }
