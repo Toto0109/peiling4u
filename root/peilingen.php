@@ -150,5 +150,7 @@ if(isset($_POST["verzend"]))
 
     mysqli_close($mysql)
         or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+
+    header("Refresh:0");
 }
 ?>
