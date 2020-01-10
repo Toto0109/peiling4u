@@ -86,13 +86,6 @@ if(!isset($_SESSION["logged_in"]))
     else if($_SESSION["logged_in"] == true)
     {
         $gebruikersnr = $_SESSION["gebruiker"];
-       
-        echo "<form action='creator.php' method='post'>
-                Peilingnaam: <input type='text' name='titel'> <br>
-                Openbaar: <input type='checkbox' name='openbaar' value='1'> <br>
-                <input type='submit' name='maakpeiling' value='Maak een nieuwe peiling'>
-            <form>
-            <br>";
     
         $mysql = mysqli_connect($server,$user,$pass,$db) 
             or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
@@ -106,10 +99,19 @@ if(!isset($_SESSION["logged_in"]))
             or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
         
         echo "Uw peilngen: <br>";
+        echo "<form action='creator.php' method='post'>";
         while(list($peilingnr, $peilingtitel) = mysqli_fetch_row($resultaat))  
         {
+            echo "<input type='submit' name='del_peiling[$peilingnr]' value='x'>";
             echo"<a href='creator.php?nr=$peilingnr'>$peilingtitel<a/><br />"; 
         }
+        echo "</form>";
+        echo "Nieuwe peiling:<br>";
+        echo "<form action='creator.php' method='post'>
+               Peilingnaam: <input type='text' name='titel'><br>
+               <input type='submit' name='maakpeiling' value='Maak een nieuwe peiling'>
+            </form>
+            <br>";
     }
     else 
     {
@@ -127,23 +129,20 @@ if(isset($_POST["maakpeiling"]))
     
     $gebruikersnr = $_SESSION["gebruiker"];
     $titel = mysqli_real_escape_string($mysql, $_POST["titel"]);
-    if(isset($_POST["openbaar"]))
-    {
-        $openbaar = 1;
-    }
-    else
-    {
-        $openbaar = 0;
-    }
 
     mysqli_query($mysql,"INSERT INTO peilingen(gebruikersnr,titel,openbaar) 
-                         VALUES('$gebruikersnr','$titel','$openbaar')") 
+                         VALUES('$gebruikersnr','$titel',0)") 
         or die("De insertquery op de database is mislukt!"); 
-    
+
+    $resultaat = mysqli_query($mysql, "SELECT MAX(peilingnr)
+                                      FROM peilingen")
+        or die("De selectquery op de database is mislukt!"); 
+
     mysqli_close($mysql) 
         or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
 
-    header("Refresh:0");
+    list($max_peilingnr) = mysqli_fetch_row($resultaat);
+    header("Location: creator.php?nr=$max_peilingnr");
 }
 
 if(isset($_POST["save"]))
@@ -255,6 +254,25 @@ if(isset($_POST["del_antwoord"]))
 
     header("Refresh:0");
 
+
+}
+
+if(isset($_POST["del_peiling"]))
+{
+    $peilingnr = array_pop(array_keys($_REQUEST["del_peiling"]));
+
+    $mysql = mysqli_connect($server,$user,$pass,$db) 
+        or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
+
+    // Delete de peiling 
+    mysqli_query($mysql,"DELETE FROM peilingen
+                         WHERE peilingnr = '$peilingnr'")
+        or die("De deletequery op de database is mislukt!"); 
+    
+    mysqli_close($mysql) 
+        or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+
+    header("Refresh:0");
 
 }
 ?>
