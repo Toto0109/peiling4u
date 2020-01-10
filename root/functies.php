@@ -258,4 +258,40 @@ function max_antwoordnr($peilingnr, $vraagnr)
     list($max_antwoordnr) = mysqli_fetch_row($resultaat);
     return $max_antwoordnr;
 }
+
+function resultaat_vraag($peilingnr, $vraagnr)
+{
+    global $server, $user, $pass, $db;
+    $mysql = mysqli_connect($server,$user,$pass,$db) 
+        or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
+
+    $resultaat = mysqli_query($mysql,"
+        SELECT antwoord, COUNT(antwoord)
+        FROM resultaten 
+        WHERE peilingnr = '$peilingnr' AND vraagnr = '$vraagnr'
+        GROUP BY antwoord")
+        or die("De selectquery op de database is mislukt!"); 
+
+    mysqli_close($mysql) 
+        or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+    
+    echo "
+        <div class='ct-chart' id='chart$vraagnr'></div>
+        <script>
+            var data = {
+                labels: [],
+                series: [[]]
+            };
+
+            var options = {
+                width: 200,
+                height: 200
+            };";
+    while(list($antwoord, $aantal) = mysqli_fetch_row($resultaat)) {
+        echo "data.labels.push(".json_encode($antwoord).");";
+        echo "data.series[0].push(".json_encode($aantal).");";
+    }
+
+    echo "new Chartist.Bar('#chart$vraagnr', data, options);</script>";
+}
 ?>
