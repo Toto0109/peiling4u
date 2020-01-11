@@ -14,7 +14,7 @@ if(!isset($_SESSION["logged_in"]))
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1 ">
-    <title>Login</title>
+    <title>Resultaten</title>
     <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
     <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
 </head>
@@ -38,16 +38,17 @@ if(!isset($_SESSION["logged_in"]))
         $gebruikersnr = $_SESSION["gebruiker"];
         $peilingnr = $_GET["nr"];
 
-        for($i = 1; $i <= max_vraagnr($peilingnr); $i++) {
-            echo "Vraag $i<br>";
-            resultaat_vraag($peilingnr, $i);
-        }
         if (get_openbaar($_GET["nr"]) == 1)
         {
+            for($i = 1; $i <= max_vraagnr($peilingnr); $i++) {
+                echo "Vraag $i<br>";
+                resultaat_vraag($peilingnr, $i);
+            }
+
         }
         else
         {
-            echo "Deze peiling is niet openbaar";
+            echo "Deze peiling bestaat niet of is niet openbaar";
         }
     }
     else if($_SESSION["logged_in"] == true) 

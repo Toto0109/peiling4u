@@ -261,6 +261,8 @@ function max_antwoordnr($peilingnr, $vraagnr)
 
 function resultaat_vraag($peilingnr, $vraagnr)
 {
+    $aantal_array = array();
+    $pie_chart = false;
     global $server, $user, $pass, $db;
     $mysql = mysqli_connect($server,$user,$pass,$db) 
         or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
@@ -279,19 +281,51 @@ function resultaat_vraag($peilingnr, $vraagnr)
         <div class='ct-chart' id='chart$vraagnr'></div>
         <script>
             var data = {
-                labels: [],
-                series: [[]]
-            };
-
-            var options = {
+                labels: [],";
+    if($pie_chart)
+        echo "series: []";
+    else
+        echo "series: [[]]";
+    echo "};
+            var options = {";
+    if(!$pie_chart)
+        echo "axisY: {onlyInteger: true},";
+    echo "
                 width: 200,
                 height: 200
             };";
     while(list($antwoord, $aantal) = mysqli_fetch_row($resultaat)) {
-        echo "data.labels.push(".json_encode($antwoord).");";
-        echo "data.series[0].push(".json_encode($aantal).");";
+        echo "data.labels.push(".$antwoord.");";
+        if($pie_chart)
+            echo "data.series.push(".$aantal.");";
+        else 
+            echo "data.series[0].push(".$aantal.");";
+        $aantal_array[$antwoord] = $aantal;
     }
+    
+    if($pie_chart)
+        echo "new Chartist.Pie('#chart$vraagnr', data, options);</script>";
+    else
+        echo "new Chartist.Bar('#chart$vraagnr', data, options);</script>";
 
-    echo "new Chartist.Bar('#chart$vraagnr', data, options);</script>";
+    echo "
+        <table>
+            <tr>
+                <th>Nr</th>
+                <th>Antwoord</th>
+                <th>Aantal</th>
+            </tr>";
+    for ($i = 1; $i <= max_antwoordnr($peilingnr, $vraagnr); $i++) {
+        echo "<tr>";
+        echo "<td>".$i."</td>";
+        echo "<td>".get_antwoord($peilingnr, $vraagnr, $i)."</td>";
+        if($aantal_array[$i] != NULL) 
+            echo "<td>".$aantal_array[$i]."</td>";
+        else 
+            echo "<td>0</td>";
+        echo "</tr>";
+    }
+    echo "</table>";
+    echo "<br>";
 }
 ?>
