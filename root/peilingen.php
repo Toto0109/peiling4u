@@ -14,7 +14,7 @@ if(!isset($_SESSION["logged_in"]))
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1 ">
-    <title>Login</title>
+    <title>Peilingen</title>
 </head>
 <body>
     <a href="index.php">Home</a> <br>
