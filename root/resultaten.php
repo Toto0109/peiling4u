@@ -41,7 +41,8 @@ if(!isset($_SESSION["logged_in"]))
         if (get_openbaar($_GET["nr"]) == 1)
         {
             for($i = 1; $i <= max_vraagnr($peilingnr); $i++) {
-                echo "Vraag $i<br>";
+                echo "Vraag $i: ";
+                echo get_vraag($peilingnr, $i)."<br>";
                 resultaat_vraag($peilingnr, $i);
             }
 

@@ -262,7 +262,7 @@ function max_antwoordnr($peilingnr, $vraagnr)
 function resultaat_vraag($peilingnr, $vraagnr)
 {
     $aantal_array = array();
-    $pie_chart = false;
+    $pie_chart = true;
     global $server, $user, $pass, $db;
     $mysql = mysqli_connect($server,$user,$pass,$db) 
         or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
@@ -277,23 +277,32 @@ function resultaat_vraag($peilingnr, $vraagnr)
     mysqli_close($mysql) 
         or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
     
-    echo "
-        <div class='ct-chart' id='chart$vraagnr'></div>
+    if($pie_chart) {
+        echo "<div class='ct-chart' id='chart$vraagnr'></div>
         <script>
             var data = {
-                labels: [],";
-    if($pie_chart)
-        echo "series: []";
-    else
-        echo "series: [[]]";
-    echo "};
-            var options = {";
-    if(!$pie_chart)
-        echo "axisY: {onlyInteger: true},";
-    echo "
+                labels: [],
+                series: []
+            };
+            var options = {
                 width: 200,
                 height: 200
             };";
+    }
+    else {
+        echo "<div class='ct-chart' id='chart$vraagnr'></div>
+        <script>
+            var data = {
+                labels: [],
+                series: [[]]
+            };
+            var options = {
+                axisY: {onlyInteger: true},
+                width: 200,
+                height: 200
+            };";
+    }
+    
     while(list($antwoord, $aantal) = mysqli_fetch_row($resultaat)) {
         echo "data.labels.push(".$antwoord.");";
         if($pie_chart)
