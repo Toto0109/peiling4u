@@ -43,7 +43,80 @@ if(!isset($_SESSION["logged_in"]))
             for($i = 1; $i <= max_vraagnr($peilingnr); $i++) {
                 echo "Vraag $i: ";
                 echo get_vraag($peilingnr, $i)."<br>";
-                resultaat_vraag($peilingnr, $i);
+                $aantal_array = array();
+                $pie_chart = is_piechart($peilingnr, $i);
+                $mysql = mysqli_connect($server,$user,$pass,$db) 
+                    or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
+            
+                $resultaat = mysqli_query($mysql,"
+                    SELECT antwoord, COUNT(antwoord)
+                    FROM resultaten 
+                    WHERE peilingnr = '$peilingnr' AND vraagnr = '$i'
+                    GROUP BY antwoord")
+                    or die("De selectquery op de database is mislukt!"); 
+            
+                mysqli_close($mysql) 
+                    or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+                
+                if($pie_chart) {
+                    echo "<div class='ct-chart' id='chart$i'></div>
+                    <script>
+                        var data = {
+                            labels: [],
+                            series: []
+                        };
+                        var options = {
+                            width: 200,
+                            height: 200
+                        };";
+                }
+                else {
+                    echo "<div class='ct-chart' id='chart$i'></div>
+                    <script>
+                        var data = {
+                            labels: [],
+                            series: [[]]
+                        };
+                        var options = {
+                            axisY: {onlyInteger: true},
+                            width: 200,
+                            height: 200
+                        };";
+                }
+                
+                while(list($antwoord, $aantal) = mysqli_fetch_row($resultaat)) {
+                    echo "data.labels.push(".$antwoord.");";
+                    if($pie_chart)
+                        echo "data.series.push(".$aantal.");";
+                    else 
+                        echo "data.series[0].push(".$aantal.");";
+                    $aantal_array[$antwoord] = $aantal;
+                }
+                
+                if($pie_chart)
+                    echo "new Chartist.Pie('#chart$i', data, options);</script>";
+                else
+                    echo "new Chartist.Bar('#chart$i', data, options);</script>";
+            
+                echo "
+                    <table>
+                        <tr>
+                            <th>Nr</th>
+                            <th>Antwoord</th>
+                            <th>Aantal</th>
+                        </tr>";
+                for ($j = 1; $j <= max_antwoordnr($peilingnr, $i); $j++) {
+                    echo "<tr>";
+                    echo "<td>".$j."</td>";
+                    echo "<td>".get_antwoord($peilingnr, $i, $j)."</td>";
+                    if($aantal_array[$j] != NULL) 
+                        echo "<td>".$aantal_array[$j]."</td>";
+                    else 
+                        echo "<td>0</td>";
+                    echo "</tr>";
+                }
+                echo "</table>";
+                echo "<br>";
             }
 
         }
