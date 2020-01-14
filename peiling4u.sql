@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.1
+-- version 4.7.5
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 30, 2019 at 03:47 PM
--- Server version: 10.4.10-MariaDB
--- PHP Version: 7.3.11
+-- Generation Time: Jan 14, 2020 at 11:18 AM
+-- Server version: 5.6.34
+-- PHP Version: 7.1.11
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -32,7 +32,7 @@ CREATE TABLE `antwoorden` (
   `peilingnr` int(11) NOT NULL,
   `vraagnr` int(11) NOT NULL,
   `antwoordnr` int(11) NOT NULL,
-  `antwoord` text DEFAULT NULL
+  `antwoord` text
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -83,8 +83,9 @@ CREATE TABLE `resultaten` (
 CREATE TABLE `vragen` (
   `peilingnr` int(11) NOT NULL,
   `vraagnr` int(11) NOT NULL,
-  `vraag` text DEFAULT NULL,
-  `meerdere_antwoorden` tinyint(1) DEFAULT 0
+  `vraag` text,
+  `meerdere_antwoorden` tinyint(1) DEFAULT '0',
+  `cirkeldiagram` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -131,13 +132,13 @@ ALTER TABLE `vragen`
 -- AUTO_INCREMENT for table `gebruikers`
 --
 ALTER TABLE `gebruikers`
-  MODIFY `gebruikersnr` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `gebruikersnr` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `peilingen`
 --
 ALTER TABLE `peilingen`
-  MODIFY `peilingnr` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `peilingnr` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- Constraints for dumped tables

@@ -52,6 +52,7 @@ if(!isset($_SESSION["logged_in"]))
             {
                 $vraag = get_vraag($peilingnr, $i);
                 $m_antwoorden = get_m_antwoorden($peilingnr, $i);
+                $piechart = is_piechart($peilingnr, $i);
                 echo "Vraag ".$i.": ";
                 echo "<input type='text' name='vraag$i' value='$vraag'>&nbsp;";
                 echo "Meerdere antwoorden mogelijk: <input type='checkbox' name='m_antwoorden$i' value='1'";
@@ -61,6 +62,13 @@ if(!isset($_SESSION["logged_in"]))
                 }
                 else
                 {
+                    echo ">";
+                }
+                echo "Piechart: <input type='checkbox' name='piechart$i' value='1'";
+                if($piechart == true) {
+                    echo " checked>";
+                }
+                else {
                     echo ">";
                 }
                 echo "<input type='submit' name='del_vraag[$i]' value='x'><br>";

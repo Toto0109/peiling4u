@@ -15,7 +15,7 @@ if(!isset($_SESSION["logged_in"]))
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1 ">
     <title>Resultaten</title>
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+    <link rel="stylesheet" href="styles/chartist.css">
     <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
 </head>
 <body>

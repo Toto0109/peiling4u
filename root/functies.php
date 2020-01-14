@@ -202,9 +202,15 @@ function save_peiling()
         {
             $m_antwoorden = 0;
         }
-                
+        if(isset($_POST["piechart$i"])) {
+            $piechart = 1;
+        }
+        else {
+            $piechart = 0;
+        }
+
         mysqli_query($mysql,"UPDATE vragen
-                             SET vraag='$vraag', meerdere_antwoorden='$m_antwoorden'
+                             SET vraag='$vraag', meerdere_antwoorden='$m_antwoorden', cirkeldiagram='$piechart'
                              WHERE peilingnr = '$peilingnr' AND vraagnr = '$i'") 
             or die("De insertquery op de database is mislukt!"); 
 
@@ -259,10 +265,30 @@ function max_antwoordnr($peilingnr, $vraagnr)
     return $max_antwoordnr;
 }
 
+function is_piechart($peilingnr, $vraagnr)
+{
+    global $server, $user, $pass, $db;
+    $mysql = mysqli_connect($server,$user,$pass,$db) 
+        or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
+
+    $resultaat = mysqli_query($mysql,"
+        SELECT cirkeldiagram
+        FROM vragen
+        WHERE peilingnr = '$peilingnr' AND vraagnr = '$vraagnr'")
+        or die("De selectquery op de database is mislukt!"); 
+
+    mysqli_close($mysql) 
+        or die("Het verbreken van de verbinding met de MySQL-server is mislukt!");
+
+    list($is_piechart) = mysqli_fetch_row($resultaat);
+
+    return $is_piechart;
+}
+
 function resultaat_vraag($peilingnr, $vraagnr)
 {
     $aantal_array = array();
-    $pie_chart = true;
+    $pie_chart = is_piechart($peilingnr, $vraagnr);
     global $server, $user, $pass, $db;
     $mysql = mysqli_connect($server,$user,$pass,$db) 
         or die("Fout: Er is geen verbinding met de MySQL-server tot stand gebracht!");
